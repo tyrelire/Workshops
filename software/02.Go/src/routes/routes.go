@@ -1,14 +1,23 @@
 package routes
 
 import (
-	"poc-workshop-go/controllers"
+    "poc-workshop-go/controllers"
+    "poc-workshop-go/middlewares"
 
-	"github.com/gorilla/mux"
+    "github.com/gorilla/mux"
 )
 
-// Init sets up all the routes for the server
-// it could be splited up in differents sub fonctions
 func Init(r *mux.Router) {
 
-	r.HandleFunc("/", controllers.Welcome).Methods("GET")
+    r.HandleFunc("/", middlewares.LogRequest(controllers.Welcome)).Methods("GET")
+
+    r.HandleFunc("/hello", middlewares.LogRequest(controllers.Hello)).Methods("GET")
+
+    r.HandleFunc("/auth/hello", middlewares.LogRequest(middlewares.AuthMiddleware(controllers.AuthHello))).Methods("GET")
+
+    r.HandleFunc("/whoami/{user}", middlewares.LogRequest(controllers.WhoAmI)).Methods("GET")
+
+    r.HandleFunc("/add", middlewares.LogRequest(controllers.AddUser)).Methods("POST")
+    r.HandleFunc("/get/{id}", middlewares.LogRequest(controllers.GetUser)).Methods("GET")
+    r.HandleFunc("/del/{id}", middlewares.LogRequest(controllers.DeleteUser)).Methods("DELETE")
 }
